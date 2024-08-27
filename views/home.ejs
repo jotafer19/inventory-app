@@ -1,0 +1,22 @@
+<div class="content home-page">
+    <div class="home-intro">
+        <h1>Videogames Inventory</h1>
+    </div>
+    <div class="featured-games">
+        <h2>Featured Games</h2>
+        <div class="featured-container">
+            <% games.forEach(game => { %>
+                <div class="card">
+                    <img class="card-img" src="uploads/<%= game.url %>.webp" alt="<%= game.title %> image">
+                    <div class="card-title"><%= game.title %></div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    <div class="featured-genres">
+        <h2>Featured Genres</h2>
+    </div>
+    <div class="featured-developers">
+        <h2>Featured Developers</h2>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="content games-page">
+    <a href="/games/new">Add game</a>
+    <% games.forEach(game => { %>
+        <div class="card game">
+            <p><%= game.title %></p>
+            <p><%= game.release_date %></p>
+        </div>
+    <% }) %>
+</div>

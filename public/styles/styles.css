@@ -1,0 +1,48 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.featured-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.card {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    border: 1px solid black;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+    width: 100%;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+}
+
+.card:hover .card-title {
+    opacity: 1;
+}
