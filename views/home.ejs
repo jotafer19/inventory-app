@@ -6,7 +6,7 @@
         <h2>Featured Games</h2>
         <div class="featured-container">
             <% games.forEach(game => { %>
-                <div class="card">
+                <div class="card game-card">
                     <img class="card-img" src="uploads/<%= game.url %>.webp" alt="<%= game.title %> image">
                     <div class="card-title"><%= game.title %></div>
                 </div>
@@ -15,8 +15,23 @@
     </div>
     <div class="featured-genres">
         <h2>Featured Genres</h2>
+        <div class="featured-container">
+            <% genres.forEach(genre => { %>
+                <div class="card genre-card">
+                    <img class="card-img" src="/uploads/<%= genre.logo %>.webp" alt="<%= genre.name %> logo">
+                    <div class="card-title"><%= genre.name %></div>
+                </div>
+            <% }) %>
+        </div>
     </div>
     <div class="featured-developers">
         <h2>Featured Developers</h2>
+        <div class="featured-container">
+            <% developers.forEach(developer => { %>
+                <div class="card developer-card">
+                    <img class="card-img" src="/uploads/<%= developer.logo %>_logo.webp" alt="<%= developer.name %> logo">
+                </div>
+            <% }) %>
+        </div>
     </div>
 </div>

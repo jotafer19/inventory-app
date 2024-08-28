@@ -5,7 +5,7 @@ exports.homeGet = asyncHandler(async (req, res) => {
   const featuredGames = await query.getFeaturedGames();
   const featuredGenres = await query.getFeaturedGenres();
   const featuredDevelopers = await query.getFeaturedDevelopers();
-
+  console.log(featuredGenres)
   if (!featuredGames || !featuredGenres || !featuredDevelopers) {
     throw new Error("Data not found")
   }

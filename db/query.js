@@ -62,7 +62,7 @@ async function getFeaturedGames() {
 async function getFeaturedGenres() {
   const { rows } = await pool.query(`
     SELECT 
-      genres.name,
+      genres.*,
       COUNT(genres.id) AS number_games
     FROM 
       genres
@@ -83,7 +83,7 @@ async function getFeaturedGenres() {
 async function getFeaturedDevelopers() {
   const { rows } = await pool.query(`
     SELECT 
-      developers.name,
+      developers.*,
       COUNT(developers.id) AS number_games
     FROM 
       developers
