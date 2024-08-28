@@ -101,6 +101,10 @@ async function getFeaturedDevelopers() {
   return rows;
 }
 
+async function addGame(params) {
+  //
+}
+
 module.exports = {
   getAllGames,
   getAllGenres,
