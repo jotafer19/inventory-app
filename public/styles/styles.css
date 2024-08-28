@@ -4,7 +4,42 @@
     margin: 0;
 }
 
-.featured-container {
+.header {
+    height: 10svh;
+}
+
+.header .nav {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.header .nav ul {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    list-style: none;
+}
+
+.header-link {
+    text-decoration: none;
+    color: black;
+}
+
+/* ------- HOMEPAGE ------- */
+
+.home-intro {
+    height: 90svh;
+    background-color: aqua;
+}
+
+.container {
+    width: 100%;
+    padding: 1rem;
+}
+
+.list {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -54,8 +89,8 @@
     transition: opacity .3s ease-in-out;
 }
 
-.game-card:hover .card-title,
-.genre-card:hover .card-title {
+.card:hover .card-title,
+.card:hover .card-title {
     opacity: 1;
 }
 
