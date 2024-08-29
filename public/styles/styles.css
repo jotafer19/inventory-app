@@ -4,11 +4,24 @@
     margin: 0;
 }
 
-.header {
-    height: 10svh;
+:root {
+    --header-background: #404040;
+    --header-background-hover: #4b4b4b;
+    --header-active-link: #363636;
 }
 
-.header .nav {
+.header {
+    height: 10svh;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: var(--header-background);
+}
+
+.header .nav,
+.header .nav ul,
+.header .nav li,
+.header-link {
     height: 100%;
     display: flex;
     align-items: center;
@@ -16,15 +29,23 @@
 
 .header .nav ul {
     width: 100%;
-    display: flex;
     justify-content: space-evenly;
-    align-items: center;
     list-style: none;
 }
 
 .header-link {
+    padding: 1rem;
     text-decoration: none;
-    color: black;
+    color: white;
+}
+
+.header-link:hover {
+    background-color: var(--header-background-hover);
+}
+
+.header-link.active {
+    background-color: var(--header-active-link);
+    border-bottom: 4px solid orange;
 }
 
 /* ------- HOMEPAGE ------- */
