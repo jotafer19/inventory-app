@@ -18,6 +18,8 @@ async function getAllGames() {
       genres ON gg.genre_id = genres.id
     GROUP BY
       games.id
+    ORDER BY
+      games.title
   `);
 
   return rows;

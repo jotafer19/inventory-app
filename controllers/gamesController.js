@@ -1,14 +1,20 @@
+const asyncHandler = require("express-async-handler")
 const query = require("../db/query");
 
-exports.gamesGet = async (req, res) => {
+exports.gamesGet = asyncHandler(async (req, res) => {
   const allGames = await query.getAllGames();
-  console.log(allGames);
+
+  if (!allGames) {
+    throw new Error("Games not found")
+  }
+  
   res.render("layout", {
     title: "Games",
     view: "games",
+    add: "game",
     games: allGames,
   });
-};
+})
 
 exports.newGameGet = (req, res) => {
   res.render("layout", {

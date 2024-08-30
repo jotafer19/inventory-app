@@ -1,9 +1,15 @@
-<div class="content games-page">
-    <a href="/games/new">Add game</a>
-    <% games.forEach(game => { %>
-        <div class="card game">
-            <p><%= game.title %></p>
-            <p><%= game.release_date %></p>
-        </div>
-    <% }) %>
+<div class="container games-container">
+    <h2>All Games</h2>
+    <a href="/games/new" aria-label="Add game">
+        <%- include("partials/addItem") %>
+    </a>
+    <!-- <button class="add new-game"><a href="/games/new">+</a></button> -->
+    <div class="list games-list">
+        <% games.forEach(game => { %>
+            <div class="card game-card">
+                <img class="card-img" src="uploads/<%= game.url %>.webp" alt="<%= game.title %> image">
+                <div class="card-title"><%= game.title %></div>
+            </div>
+        <% }) %>
+    </div>
 </div>

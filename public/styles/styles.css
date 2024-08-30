@@ -10,6 +10,8 @@
     --header-active-link: #363636;
 }
 
+/* ------- HEADER ------- */
+
 .header {
     height: 10svh;
     position: sticky;
@@ -56,16 +58,61 @@
 }
 
 .container {
-    width: 100%;
+    position: relative;
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-.list {
-    width: 100%;
+.add {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: 50px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    background-color: var(--header-background);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    z-index: 999;
+}
+
+.add:hover {
+    width: 150px;
+}
+
+.add .symbol {
+    opacity: 1;
+    transform: opacity 0.3s ease;
+}
+
+.add:hover .symbol {
+    opacity: 0;
+}
+
+.add .text {
+    position: absolute;
+    opacity: 0;
+    transform: opacity 0.3s ease;
+}
+
+.add:hover .text {
+    opacity: 1;
+}
+
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
 }
 
 .card {
@@ -80,12 +127,11 @@
 }
 
 .game-card {
-    width: 300px;
     height: 400px;
 }
 
 .card:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 .card-img {
