@@ -1,9 +1,8 @@
 <div class="container games-container">
-    <h2>All Games</h2>
+    <h2>Games</h2>
     <a href="/games/new" aria-label="Add game">
         <%- include("partials/addItem") %>
     </a>
-    <!-- <button class="add new-game"><a href="/games/new">+</a></button> -->
     <div class="list games-list">
         <% games.forEach(game => { %>
             <div class="card game-card">

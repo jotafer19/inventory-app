@@ -1,0 +1,14 @@
+<div class="container genres-container">
+    <h2>Genres</h2>
+    <a href="/genres/new" aria-label="Add genre">
+        <%- include("partials/addItem") %>
+    </a>
+    <div class="list genres-list">
+        <% genres.forEach(genre => { %>
+            <div class="card">
+                <img class="card-img" src="uploads/<%= genre.logo %>.webp" alt="<%= genre.name %> image">
+                <div class="card-title"><%= genre.name %></div>
+            </div>
+        <% }) %>
+    </div>
+</div>
