@@ -3,7 +3,7 @@ const path = require("node:path");
 require("dotenv").config();
 const indexRouter = require("./routes/index");
 const gamesRouter = require("./routes/games");
-const genresRouter = require("./routes/genres")
+const genresRouter = require("./routes/genres");
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/games", gamesRouter);
-app.use("/genres", genresRouter)
+app.use("/genres", genresRouter);
 
 app.use((err, req, res, next) => {
   console.log(err);

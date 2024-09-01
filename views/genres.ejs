@@ -1,8 +1,5 @@
-<div class="container genres-container">
+<div class="content container genres-container">
     <h2>Genres</h2>
-    <a href="/genres/new" aria-label="Add genre">
-        <%- include("partials/addItem") %>
-    </a>
     <div class="list genres-list">
         <% genres.forEach(genre => { %>
             <div class="card">
@@ -11,4 +8,7 @@
             </div>
         <% }) %>
     </div>
+    <a href="/genres/new" aria-label="Add genre">
+        <%- include("partials/addItem") %>
+    </a>
 </div>

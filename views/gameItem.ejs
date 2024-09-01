@@ -1,0 +1,35 @@
+<div class="content container">
+    <div class="game-item">
+        <div class="poster">
+            <img class="poster-img" src="/uploads/<%= game.url %>.webp" alt="<%= game.title %> image">
+        </div>
+        <div class="info">
+            <h2 class="title"><%= game.title %></h2>
+            <div class="field">
+                <p><%= game.description %></p>
+            </div>
+            <div class="field genres">
+                <% game.genres.forEach(genre => { %>
+                    <a class="info-link" href="/genres/<%= genre.id %>"><%= genre.name %></a>
+                <% }) %>
+            </div>
+            <div class="field">
+                <p><span class="desc">Rating:</span> <span class="item-value rating"><%= game.rating %></span></p>
+            </div>
+            <div class="field">
+                <span class="desc">Developed by:</span>
+                <span class="item-value">
+                    <% game.developers.forEach(developer => { %>
+                        <a class="dev" href="/developers/<%= developer.id %>"><%= developer.name %></a>
+                    <% }) %>
+                </span>
+            </div>
+            <div class="field">
+                <p>
+                    <span class="desc">Release date:</span>
+                    <span class="item-value"><%= new Date(game.release_date).toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric"}) %></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,6 +17,24 @@ exports.gamesGet = asyncHandler(async (req, res) => {
   });
 });
 
+exports.idGameGet = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const requestedGame = await query.getGame(id);
+
+  if (!requestedGame) {
+    throw new Error("Game not found");
+  }
+
+  console.log(requestedGame);
+
+  res.render("layout", {
+    title: requestedGame.title,
+    view: "gameItem",
+    tab: "games",
+    game: requestedGame,
+  });
+});
+
 exports.createGameGet = (req, res) => {
   res.render("layout", {
     title: "New game",

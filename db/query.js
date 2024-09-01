@@ -26,7 +26,9 @@ async function getAllGames() {
 }
 
 async function getAllGenres() {
-  const { rows } = await pool.query("SELECT * FROM genres;");
+  const { rows } = await pool.query(
+    "SELECT * FROM genres ORDER BY genres.name;",
+  );
   return rows;
 }
 
@@ -103,8 +105,29 @@ async function getFeaturedDevelopers() {
   return rows;
 }
 
-async function addGame(params) {
-  //
+async function getGame(id) {
+  const query = `
+    SELECT
+      games.*,
+      JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', developers.id, 'name', developers.name)) AS developers,
+      JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', genres.id, 'name', genres.name)) AS genres
+    FROM
+      developers
+    JOIN
+      developers_games ON developers.id = developers_games.developer_id
+    JOIN
+      games ON developers_games.game_id = games.id
+    JOIN
+      games_genres ON games.id = games_genres.game_id
+    JOIN
+      genres ON games_genres.genre_id = genres.id
+    WHERE
+      games.id = ($1)
+    GROUP BY
+      games.id
+  `;
+  const { rows } = await pool.query(query, [id]);
+  return rows[0];
 }
 
 module.exports = {
@@ -114,4 +137,5 @@ module.exports = {
   getFeaturedGames,
   getFeaturedGenres,
   getFeaturedDevelopers,
+  getGame,
 };
