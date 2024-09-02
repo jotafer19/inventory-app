@@ -25,8 +25,6 @@ exports.idGameGet = asyncHandler(async (req, res) => {
     throw new Error("Game not found");
   }
 
-  console.log(requestedGame);
-
   res.render("layout", {
     title: requestedGame.title,
     view: "gameItem",

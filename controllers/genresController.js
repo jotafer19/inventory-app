@@ -16,3 +16,16 @@ exports.genresGet = asyncHandler(async (req, res) => {
     genres: allGenres,
   });
 });
+
+exports.gamesPerGenreGet = asyncHandler(async (req, res) => {
+  const genreId = req.params.id;
+  const gamesByGenre = await query.getGamesByGenre(genreId)
+  console.log(gamesByGenre)
+  res.render("layout", {
+    title: `${gamesByGenre[0].genre} games`,
+    view: "games",
+    tab: "genres",
+    add: "game",
+    games: gamesByGenre
+  })
+})

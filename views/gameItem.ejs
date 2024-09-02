@@ -9,7 +9,7 @@
                 <p><%= game.description %></p>
             </div>
             <div class="field genres">
-                <% game.genres.forEach(genre => { %>
+                <% game.genres.sort((a, b) => a.name.localeCompare(b.name)).forEach(genre => { %>
                     <a class="info-link" href="/genres/<%= genre.id %>"><%= genre.name %></a>
                 <% }) %>
             </div>
@@ -19,7 +19,7 @@
             <div class="field">
                 <span class="desc">Developed by:</span>
                 <span class="item-value">
-                    <% game.developers.forEach(developer => { %>
+                    <% game.developers.sort((a, b) => a.name.localeCompare(b.name)).forEach(developer => { %>
                         <a class="dev" href="/developers/<%= developer.id %>"><%= developer.name %></a>
                     <% }) %>
                 </span>

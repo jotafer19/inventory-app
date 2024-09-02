@@ -2,10 +2,12 @@
     <h2>Genres</h2>
     <div class="list genres-list">
         <% genres.forEach(genre => { %>
-            <div class="card">
-                <img class="card-img" src="uploads/<%= genre.logo %>.webp" alt="<%= genre.name %> image">
-                <div class="card-title"><%= genre.name %></div>
-            </div>
+            <a href="/genres/<%= genre.id %>">
+                <div class="card">
+                    <img class="card-img" src="uploads/<%= genre.logo %>.webp" alt="<%= genre.name %> image">
+                    <div class="card-title"><%= genre.name %></div>
+                </div>
+            </a>
         <% }) %>
     </div>
     <a href="/genres/new" aria-label="Add genre">
