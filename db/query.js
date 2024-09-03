@@ -33,7 +33,7 @@ async function getAllGenres() {
 }
 
 async function getAllDevelopers() {
-  const { rows } = await pool.query("SELECT * FROM developers;");
+  const { rows } = await pool.query("SELECT * FROM developers ORDER BY developers.name;");
   return rows;
 }
 
@@ -143,8 +143,31 @@ async function getGamesByGenre(genreId) {
       games ON games_genres.game_id = games.id
     WHERE
       genres.id = ($1)
+    ORDER BY
+      games.title
+  `;
+  const { rows } = await pool.query(query, [genreId]);
+  return rows;
+}
+
+async function getGamesByDevelopers(developerId) {
+  const query = `
+    SELECT
+      games.*,
+      developers.name AS developer
+    FROM
+      developers
+    JOIN
+      developers_games ON developers.id = developers_games.developer_id
+    JOIN
+      games ON developers_games.game_id = games.id
+    WHERE
+      developers.id = ($1)
+    ORDER BY
+      games.title
   `
-  const {rows} = await pool.query(query, [genreId]) 
+
+  const {rows} = await pool.query(query, [developerId])
   return rows;
 }
 
@@ -156,5 +179,6 @@ module.exports = {
   getFeaturedGenres,
   getFeaturedDevelopers,
   getGame,
-  getGamesByGenre
+  getGamesByGenre,
+  getGamesByDevelopers
 };

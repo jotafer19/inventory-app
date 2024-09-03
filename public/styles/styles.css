@@ -66,6 +66,8 @@
 
 .content {
   min-height: 86svh;
+  max-width: 1500px;
+  margin: 0 auto;
 }
 
 .container {
@@ -204,7 +206,7 @@
   padding: 6px 16px;
   border-radius: 24px;
   background-color: var(--header-background);
-  font-size: .9rem;
+  font-size: 0.9rem;
   color: white;
   text-decoration: none;
 }

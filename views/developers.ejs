@@ -1,0 +1,15 @@
+<div class="content container developers-container">
+    <h2><%= title %></h2>
+    <div class="list developers-list">
+        <% developers.forEach(developer => { %>
+            <a href="/developers/<%= developer.id %>">
+                <div class="card">
+                    <img class="card-img" src="uploads/<%= developer.logo %>_logo.webp" alt="<%= developer.name %> image">
+                </div>
+            </a>
+        <% }) %>
+    </div>
+    <a href="/developers/new" aria-label="Add developer">
+        <%- include("partials/addItem") %>
+    </a>
+</div>
