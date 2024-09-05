@@ -22,7 +22,7 @@ exports.gamesPerGenreGet = asyncHandler(async (req, res) => {
   const gamesByGenre = await query.getGamesByGenre(genreId);
 
   if (!gamesByGenre) {
-    throw new Error("Games not found")
+    throw new Error("Games not found");
   }
 
   res.render("layout", {

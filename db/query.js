@@ -33,7 +33,9 @@ async function getAllGenres() {
 }
 
 async function getAllDevelopers() {
-  const { rows } = await pool.query("SELECT * FROM developers ORDER BY developers.name;");
+  const { rows } = await pool.query(
+    "SELECT * FROM developers ORDER BY developers.name;",
+  );
   return rows;
 }
 
@@ -165,9 +167,9 @@ async function getGamesByDevelopers(developerId) {
       developers.id = ($1)
     ORDER BY
       games.title
-  `
+  `;
 
-  const {rows} = await pool.query(query, [developerId])
+  const { rows } = await pool.query(query, [developerId]);
   return rows;
 }
 
@@ -180,5 +182,5 @@ module.exports = {
   getFeaturedDevelopers,
   getGame,
   getGamesByGenre,
-  getGamesByDevelopers
+  getGamesByDevelopers,
 };

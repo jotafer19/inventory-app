@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const path = require("node:path");
+const multer = require("multer");
 const query = require("../db/query");
 
 exports.gamesGet = asyncHandler(async (req, res) => {
@@ -41,8 +43,23 @@ exports.createGameGet = (req, res) => {
   });
 };
 
-exports.createGamePost = (req, res) => {
-  const body = req.body;
-  console.log(body);
+exports.createGamePost = asyncHandler(async (req, res) => {
+  const { title, date, rating, description } = req.body;
+  const imagePath = req.file ? `uploads/${req.file.filename}` : null;
+  console.log(req.file);
   res.redirect("/games");
-};
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads");
+  },
+
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
+
+exports.upload = upload.single("image");

@@ -1,0 +1,52 @@
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid #ccc;
+  padding: 5px;
+  width: 300px;
+  border-radius: 5px;
+}
+
+.tag {
+  background-color: #007bff;
+  color: white;
+  padding: 5px;
+  margin: 3px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.tag span {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+#tag-input {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+}
+
+.suggestions-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 5px 0 0 0;
+  max-height: 100px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  width: 300px;
+  position: absolute;
+  background-color: white;
+  border-radius: 5px;
+  display: none;
+}
+
+.suggestions-list li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.suggestions-list li:hover {
+  background-color: #f0f0f0;
+}
