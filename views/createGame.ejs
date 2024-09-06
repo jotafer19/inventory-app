@@ -14,10 +14,16 @@
         <label for="image">Image</label>
         <input type="file" name="image" id="image">
 
-        <div class="tag-container">
-            <input type="text" id="tag-input" placeholder="Select or type to add a tag...">
+        <div>
+            <div class="tag-container">
+                <input type="text" id="tag-input" placeholder="Select or type to add a tag...">
+            </div>
+            <ul id="suggestions" class="suggestions-list">
+                <% genres.forEach(genre => { %>
+                    <li><%= genre.name %></li>
+                <% }) %>
+            </ul>
         </div>
-        <ul id="suggestions" class="suggestions-list"></ul>
 
         <button type="submit">Add game</button>
     </form>

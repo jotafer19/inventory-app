@@ -8,7 +8,7 @@
 }
 
 .tag {
-  background-color: #007bff;
+  background-color: #007BFF;
   color: white;
   padding: 5px;
   margin: 3px;
@@ -31,8 +31,7 @@
 .suggestions-list {
   list-style-type: none;
   padding: 0;
-  margin: 5px 0 0 0;
-  max-height: 100px;
+  max-height: 200px;
   overflow-y: auto;
   border: 1px solid #ccc;
   width: 300px;

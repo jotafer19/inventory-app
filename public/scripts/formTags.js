@@ -1,38 +1,39 @@
-const availableTags = ["Apple", "Banana", "Orange", "Grapes", "Mango", "Pineapple", "Strawberry"];
+const allTags = document.querySelectorAll("li")
 const tagContainer = document.querySelector('.tag-container');
 const input = document.querySelector('#tag-input');
 const suggestions = document.querySelector('#suggestions');
 
+const availableTags = [... allTags].map(tag => tag.textContent)
 let selectedTags = [];
 
-const addTag = (tag) => {
+function addTag(tag) {
     if (selectedTags.includes(tag)) return;
-    selectedTags.push(tag)
-    updateTags()
+    selectedTags.push(tag);
+    updateTags();
 }
 
-const updateTags = () => {
-    tagContainer.textContent = ""
-
+function updateTags() {
+    tagContainer.textContent = "";
+    
     selectedTags.forEach((tag, index) => {
-        const tagElement = document.createElement("div")
-        tagElement.classList.add("tag")
+        const tagElement = document.createElement("div");
+        tagElement.className = "tag";
         tagElement.textContent = tag;
 
-        const removeButton = document.createElement("span")
-        removeButton.textContent = "×"
-        removeButton.addEventListener("click", () => removeTag(index))
+        const removeButton = document.createElement("span");
+        removeButton.textContent = "×";
+        removeButton.addEventListener("click", () => removeTag(index));
 
         tagElement.appendChild(removeButton);
         tagContainer.appendChild(tagElement);
-    })
+    });
 
     tagContainer.appendChild(input);
     input.value = "";
     input.focus();
 }
 
-const removeTag = (index) => {
+function removeTag(index) {
     selectedTags.splice(index, 1);
     updateTags();
 }

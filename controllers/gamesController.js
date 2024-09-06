@@ -35,13 +35,20 @@ exports.idGameGet = asyncHandler(async (req, res) => {
   });
 });
 
-exports.createGameGet = (req, res) => {
+exports.createGameGet = asyncHandler(async (req, res) => {
+  const allGenres = await query.getAllGenres()
+
+  if (!allGenres) {
+    throw new Error("Data not found");
+  }
+
   res.render("layout", {
     title: "New game",
     view: "createGame",
     tab: "games",
+    genres: allGenres
   });
-};
+})
 
 exports.createGamePost = asyncHandler(async (req, res) => {
   const { title, date, rating, description } = req.body;
