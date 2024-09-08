@@ -1,73 +1,104 @@
-const allTags = document.querySelectorAll(".genre-item");
-const tagContainer = document.querySelector(".genres-container");
-const input = document.querySelector("#genres-input");
-const hiddenInput = document.querySelector("#genre-tags")
-const suggestions = document.querySelector("#genres-suggestions");
-
-const availableTags = [...allTags].map((tag) => tag.textContent);
-let selectedTags = [];
-
-function addTag(tag) {
-  if (selectedTags.includes(tag)) return;
-  selectedTags.push(tag);
-  updateTags();
+const genresElements = {
+  allItems: document.querySelectorAll(".genre-item"),
+  container: document.querySelector(".genres-container"),
+  input: document.querySelector("#genres-input"),
+  hiddenInput: document.querySelector("#genres-tags"),
+  suggestions: document.querySelector("#genres-suggestions")
 }
 
-function updateTags() {
-  tagContainer.textContent = "";
+const developersElements = {
+  allItems: document.querySelectorAll(".developer-item"),
+  container: document.querySelector(".developers-container"),
+  input: document.querySelector("#developers-input"),
+  hiddenInput: document.querySelector("#developers-tags"),
+  suggestions: document.querySelector("#developers-suggestions")
+}
 
-  hiddenInput.value = selectedTags.join(",")
+const availableGenres = [...genresElements.allItems].map((tag) => tag.textContent);
+const availableDevelopers = [...developersElements.allItems].map((tag) => tag.textContent)
 
-  selectedTags.forEach((tag, index) => {
-    const tagElement = document.createElement("div");
-    tagElement.className = "tag";
-    tagElement.textContent = tag;
+let selectedTags = { genres: [], developers: [] };
 
-    const removeButton = document.createElement("span");
-    removeButton.textContent = "×";
-    removeButton.addEventListener("click", () => removeTag(index));
+function addTag(tag, type, availableItems) {
+  if (!selectedTags[type].includes(tag)) {
+    selectedTags[type].push(tag);
+    updateTags(type, availableItems);
+  }
+}
 
-    tagElement.appendChild(removeButton);
-    tagContainer.appendChild(tagElement);
+function updateTags(type, elements) {
+  const { container, hiddenInput, input } = elements;
+
+  container.textContent = "";
+  hiddenInput.value = selectedTags[type].join(",");
+
+  selectedTags[type].forEach((tag, index) => {
+    const tagElement = createTagElement(tag, index, type, elements);
+    container.appendChild(tagElement);
   });
 
-  tagContainer.appendChild(input);
+  container.appendChild(input);
   input.value = "";
   input.focus();
 }
 
-function removeTag(index) {
-  selectedTags.splice(index, 1);
-  updateTags();
+function createTagElement(tag, index, type, elements) {
+  const tagElement = document.createElement("div");
+  tagElement.className = "tag";
+  tagElement.textContent = tag;
+
+  const removeButton = document.createElement("span");
+  removeButton.textContent = "×";
+  removeButton.addEventListener("click", () => removeTag(index, type, elements));
+
+  tagElement.appendChild(removeButton);
+  return tagElement;
 }
 
-input.addEventListener("input", () => {
-  suggestions.textContent = "";
+function removeTag(index, type, elements) {
+  selectedTags[type].splice(index, 1);
+  updateTags(type, elements);
+}
+
+function handleInput(query, availableItems, selectedItems, suggestionsElement, type, elements) {
+  suggestionsElement.textContent = "";
   
-  const query = input.value.toLowerCase();
-  const filteredTags = availableTags.filter(
-    (tag) => tag.toLowerCase().includes(query) && !selectedTags.includes(tag),
+  const filteredItems = availableItems.filter(
+    item => item.toLowerCase().includes(query.toLowerCase()) && !selectedItems.includes(item)
   );
 
-  if (filteredTags.length > 0) {
-    suggestions.style.display = "block";
-    filteredTags.forEach((tag) => {
-      const li = document.createElement("li");
-      li.classList.add("item", "genre-item");
-      li.textContent = tag;
-      li.addEventListener("click", () => {
-        addTag(tag);
-        suggestions.style.display = "none";
+  if (filteredItems.length) {
+    suggestionsElement.style.display = "block";
+    filteredItems.forEach(item => {
+      const suggestion = document.createElement("li");
+      suggestion.className = `${type}-item`;
+      suggestion.textContent = item;
+      suggestion.addEventListener("click", () => {
+        addTag(item, type, elements);
+        suggestionsElement.style.display = "none";
       });
-      suggestions.appendChild(li);
+      suggestionsElement.appendChild(suggestion);
     });
   } else {
-    suggestions.style.display = "none";
+    suggestionsElement.style.display = "none";
   }
-});
+}
 
-document.addEventListener("click", (event) => {
-  if (!tagContainer.contains(event.target)) {
-    suggestions.style.display = "none";
-  }
-});
+function attachInputHandler(type, availableItems, elements) {
+  elements.input.addEventListener("input", () => {
+    handleInput(elements.input.value, availableItems, selectedTags[type], elements.suggestions, type, elements);
+  });
+}
+
+function hideSuggestionsOnClickOutside(elements) {
+  document.addEventListener("click", event => {
+    if (!elements.container.contains(event.target)) {
+      elements.suggestions.style.display = "none";
+    }
+  });
+}
+
+attachInputHandler('genres', availableGenres, genresElements);
+attachInputHandler('developers', availableDevelopers, developersElements);
+hideSuggestionsOnClickOutside(genresElements);
+hideSuggestionsOnClickOutside(developersElements);
