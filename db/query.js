@@ -173,6 +173,10 @@ async function getGamesByDevelopers(developerId) {
   return rows;
 }
 
+async function addGame(title, date, description, rating, url) {
+  await pool.query("INSERT INTO games (title, release_date, description, rating, url) VALUES ($1, $2, $3, $4, $5)", [title, date, description, rating, url])
+}
+
 module.exports = {
   getAllGames,
   getAllGenres,
@@ -183,4 +187,5 @@ module.exports = {
   getGame,
   getGamesByGenre,
   getGamesByDevelopers,
+  addGame
 };

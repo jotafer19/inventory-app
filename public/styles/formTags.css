@@ -8,7 +8,7 @@
 }
 
 .tag {
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
   padding: 5px;
   margin: 3px;
@@ -22,7 +22,7 @@
   cursor: pointer;
 }
 
-#tag-input {
+.tag-input {
   border: none;
   outline: none;
   flex-grow: 1;

@@ -36,9 +36,10 @@ exports.idGameGet = asyncHandler(async (req, res) => {
 });
 
 exports.createGameGet = asyncHandler(async (req, res) => {
-  const allGenres = await query.getAllGenres()
+  const allGenres = await query.getAllGenres();
+  const allDevelopers = await query.getAllDevelopers()
 
-  if (!allGenres) {
+  if (!allGenres || !allDevelopers) {
     throw new Error("Data not found");
   }
 
@@ -46,14 +47,15 @@ exports.createGameGet = asyncHandler(async (req, res) => {
     title: "New game",
     view: "createGame",
     tab: "games",
-    genres: allGenres
+    genres: allGenres,
+    developers: allDevelopers
   });
-})
+});
 
 exports.createGamePost = asyncHandler(async (req, res) => {
-  const { title, date, rating, description } = req.body;
-  const imagePath = req.file ? `uploads/${req.file.filename}` : null;
-  console.log(req.file);
+  const { title, date, rating, description, genre } = req.body;
+  const imagePath = req.file ? req.file.filename : null;
+  await query.addGame(title, date, description, rating, imagePath)
   res.redirect("/games");
 });
 
