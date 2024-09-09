@@ -173,8 +173,24 @@ async function getGamesByDevelopers(developerId) {
   return rows;
 }
 
-async function addGame(title, date, description, rating, url) {
-  await pool.query("INSERT INTO games (title, release_date, description, rating, url) VALUES ($1, $2, $3, $4, $5)", [title, date, description, rating, url])
+async function addGame(title, date, description, rating, url, genres, developers) {
+  const insertGameQuery = "INSERT INTO games (title, release_date, description, rating, url) VALUES ($1, $2, $3, $4, $5) RETURNING id"
+  const res = await pool.query(insertGameQuery, [title, date, description, rating, url])
+  const gameId = res.rows[0].id
+  
+  const genreQuery = "INSERT INTO games_genres (game_id, genre_id) VALUES ($1, $2)"
+  for (const genre of genres) {
+    const genreRes = await pool.query("SELECT id FROM genres WHERE name LIKE ($1)", [genre])
+    const genreId = genreRes.rows[0].id
+    await pool.query(genreQuery, [gameId, genreId])
+  }
+
+  const developerQuery = "INSERT INTO developers_games (developer_id, game_id) VALUES ($1, $2)"
+  for (const developer of developers) {
+    const developersRes = await pool.query("SELECT id FROM developers WHERE name LIKE ($1)", [developer])
+    const developerId = developersRes.rows[0].id;
+    await pool.query(developerQuery, [developerId, gameId])
+  }
 }
 
 module.exports = {

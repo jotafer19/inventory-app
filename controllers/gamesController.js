@@ -1,7 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const path = require("node:path");
 const multer = require("multer");
+const { body, validationResult } = require("express-validator")
 const query = require("../db/query");
+const { error } = require("node:console");
 
 exports.gamesGet = asyncHandler(async (req, res) => {
   const allGames = await query.getAllGames();
@@ -52,12 +54,62 @@ exports.createGameGet = asyncHandler(async (req, res) => {
   });
 });
 
-exports.createGamePost = asyncHandler(async (req, res) => {
-  const { title, date, rating, description, genre } = req.body;
-  const imagePath = req.file ? req.file.filename : null;
-  await query.addGame(title, date, description, rating, imagePath)
-  res.redirect("/games");
-});
+const validateGame = [
+  body("title")
+    .trim()
+    .escape()
+    .notEmpty().withMessage("Title is required")
+    .isLength({max: 255}).withMessage("Title must be less than 255 characters"),
+  body("date")
+    .trim()
+    .notEmpty().withMessage("Date is required")
+    .isDate().withMessage("Invalid date"),
+  body("rating")
+    .trim()
+    .escape()
+    .notEmpty()
+    .isFloat({min: 1, max: 5}).withMessage("Rating should be a float number between 1 and 5"),
+  body("description")
+    .optional()
+    .trim()
+    .escape()
+    .isLength({max: 500}),
+  body("genres")
+    .trim()
+    .escape()
+    .notEmpty().withMessage("Add at least one genre"),
+    body("developers")
+    .trim()
+    .escape()
+    .notEmpty().withMessage("Add at least one developer")
+]
+
+exports.createGamePost = [
+  validateGame,
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req)
+    const allGenres = await query.getAllGenres();
+    const allDevelopers = await query.getAllDevelopers()
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("layout", {
+        title: "New game",
+        view: "createGame",
+        tab: "games",
+        errors: errors.array(),
+        genres: allGenres,
+        developers: allDevelopers
+      })
+    }
+    const { title, date, rating, description, genres, developers } = req.body;
+    const imagePath = req.file ? req.file.filename : "public/images/no_image.jpg";
+    const arrGenres = genres.split(",").map(genre => genre.trim())
+    const arrDevelopers = developers.split(",").map(developer => developer.trim())
+
+    await query.addGame(title, date, description, rating, imagePath, arrGenres, arrDevelopers)
+    res.redirect("/games");
+  })
+]
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -69,6 +121,19 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+  storage: storage,
+  fileFilter: function(req, file, cb) {
+    const fileTypes = /jpeg|jpg|png|webp/
+    const extName = fileTypes.test(path.extname(file.originalname).toLocaleLowerCase())
+    const mimeType = fileTypes.test(file.mimetype)
+
+    if (mimeType && extName) {
+      return cb(null, true)
+    } else {
+      cb("Error: images only!")
+    }
+  }
+});
 
 exports.upload = upload.single("image");
