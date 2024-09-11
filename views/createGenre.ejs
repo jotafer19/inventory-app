@@ -1,0 +1,10 @@
+<div class="container form-container">
+    <%- include("partials/error") %>
+    <form action="/genres/new" method="post" enctype="multipart/form-data">
+        <label for="genreName">Genre name</label>
+        <input type="text" name="genreName" id="genreName">
+        <label for="genreImage">Genre image</label>
+        <input type="file" name="genreImage" id="genreImage">
+        <button type="submit">Add genre</button>
+    </form>
+</div>
