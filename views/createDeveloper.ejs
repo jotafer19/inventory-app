@@ -1,0 +1,10 @@
+<div class="container form-container">
+    <%- include("partials/error") %>
+    <form action="/developers/new" method="post" enctype="multipart/form-data">
+        <label for="developerName">Developer name</label>
+        <input type="text" name="developerName" id="developerName" required>
+        <label for="developerImage">Developer image</label>
+        <input type="file" name="developerImage" id="developerImage" accept="image/*" required>
+        <button type="submit">Add developer</button>
+    </form>
+</div>

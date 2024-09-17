@@ -60,7 +60,17 @@ const validateGame = [
     .notEmpty()
     .withMessage("Title is required")
     .isLength({ max: 255 })
-    .withMessage("Title must be less than 255 characters"),
+    .withMessage("Title must be less than 255 characters")
+    .custom(async (name) => {
+      const allGames = await query.getAllGames()
+      const isGameInDB = allGames.some(item => item.title.toLowerCase() === name.toLowerCase())
+
+      if (isGameInDB) {
+        throw new Error("Game already is in the database")
+      }
+
+      return true
+    }),
   body("date")
     .trim()
     .notEmpty()
@@ -90,10 +100,10 @@ exports.createGamePost = [
   validateGame,
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
-    const allGenres = await query.getAllGenres();
-    const allDevelopers = await query.getAllDevelopers();
 
     if (!errors.isEmpty()) {
+      const allGenres = await query.getAllGenres();
+      const allDevelopers = await query.getAllDevelopers();
       return res.status(400).render("layout", {
         title: "New game",
         view: "createGame",

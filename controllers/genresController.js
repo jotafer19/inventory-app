@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const multer = require("multer");
 const path = require("node:path");
+const fs = require("fs")
 const { body, validationResult } = require("express-validator");
 const query = require("../db/query");
 
@@ -52,6 +53,32 @@ exports.createGenreGet = asyncHandler(async (req, res) => {
   });
 });
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads/genres");
+  },
+
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const fileType = path.extname(file.originalname).toLocaleLowerCase()
+    const validExtensions = /jpg|jpeg|webp|png/;
+    const isValidExtension = validExtensions.test(fileType)
+    const isValidMimeType = validExtensions.test(file.mimetype)
+
+    if (!isValidExtension || !isValidMimeType) {
+      return cb(new Error("Only images allowed"))
+    }
+
+    cb(null, true)
+  },
+});
+
 const validateGenre = [
   body("genreName")
     .trim()
@@ -72,53 +99,38 @@ const validateGenre = [
 ];
 
 exports.createGenrePost = [
+  upload.single("genreImage"),
   validateGenre,
-  asyncHandler(async (req, res) => {
-    const allGenres = await query.getAllGenres();
-    const errors = validationResult(req);
-    const { genreName } = req.body;
-    const imagePath = req.file ? req.file.filename : null;
+  async (req, res, next) => {
+    const errors = validationResult(req)
+
+    if (!req.file) {
+      errors.errors.push({ msg: "Image is required" })
+    }
 
     if (!errors.isEmpty()) {
+      if (req.file) {
+        fs.unlink(`public/uploads/genres/${req.file.filename}`, (err) => {
+          if (err) console.log("Failed to delete the file", err)
+        })
+      }
+
       return res.status(400).render("layout", {
         title: "New genre",
         view: "createGenre",
         tab: "genres",
-        category: allGenres,
-        errors: errors.array(),
-      });
+        errors: errors.array()
+      })
     }
 
-    await query.addGenre(genreName, imagePath);
-    res.redirect("/genres");
-  }),
+    next()
+  },
+  async (req, res) => {
+    const { genreName } = req.body
+    const imagePath = req.file.filename
+
+    // await query.addGenre(genreName, imagePath)
+    console.log(genreName, imagePath)
+    res.redirect("/genres")
+  }
 ];
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/uploads/genres");
-  },
-
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|webp/;
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase(),
-    );
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error("Only images files (jpg, png or webp) are allowed"), false);
-    }
-  },
-});
-
-exports.upload = upload.single("image");

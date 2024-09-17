@@ -223,6 +223,10 @@ async function addGenre(name, imagePath) {
   ]);
 }
 
+async function addDeveloper(name, imagePath) {
+  await pool.query("INSERT INTO developers (name, logo) VALUES ($1, $2)", [name, imagePath])
+}
+
 module.exports = {
   getAllGames,
   getAllGenres,
@@ -235,4 +239,5 @@ module.exports = {
   getGamesByDevelopers,
   addGame,
   addGenre,
+  addDeveloper
 };

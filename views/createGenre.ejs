@@ -2,9 +2,9 @@
     <%- include("partials/error") %>
     <form action="/genres/new" method="post" enctype="multipart/form-data">
         <label for="genreName">Genre name</label>
-        <input type="text" name="genreName" id="genreName">
+        <input type="text" name="genreName" id="genreName" required>
         <label for="genreImage">Genre image</label>
-        <input type="file" name="genreImage" id="genreImage">
+        <input type="file" name="genreImage" id="genreImage" accept="image/*" required>
         <button type="submit">Add genre</button>
     </form>
 </div>
