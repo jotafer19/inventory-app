@@ -4,7 +4,7 @@
         <% developers.forEach(developer => { %>
             <a href="/developers/<%= developer.id %>">
                 <div class="card">
-                    <img class="card-img" src="uploads/<%= developer.logo %>_logo.webp" alt="<%= developer.name %> image">
+                    <img class="card-img" src="uploads/developers/<%= developer.logo %>" alt="<%= developer.name %> image">
                 </div>
             </a>
         <% }) %>

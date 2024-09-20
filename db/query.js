@@ -227,6 +227,12 @@ async function addDeveloper(name, imagePath) {
   await pool.query("INSERT INTO developers (name, logo) VALUES ($1, $2)", [name, imagePath])
 }
 
+async function deleteGame(id) {
+  const result = await pool.query("DELETE FROM games WHERE games.id = ($1)", [id])
+  console.log(result)
+  return result;
+}
+
 module.exports = {
   getAllGames,
   getAllGenres,
@@ -239,5 +245,6 @@ module.exports = {
   getGamesByDevelopers,
   addGame,
   addGenre,
-  addDeveloper
+  addDeveloper,
+  deleteGame
 };

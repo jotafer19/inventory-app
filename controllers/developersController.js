@@ -118,9 +118,9 @@ exports.createDeveloperPost = [
   async (req, res) => {
     const { developerName } = req.body;
     const imagePath = req.file.filename ;
-
-    // await query.addDeveloper(developerName, imagePath);
     console.log(developerName, imagePath)
+
+    await query.addDeveloper(developerName, imagePath);
     res.redirect("/developers");
   }
 ]

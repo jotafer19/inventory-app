@@ -129,7 +129,7 @@ exports.createGenrePost = [
     const { genreName } = req.body
     const imagePath = req.file.filename
 
-    // await query.addGenre(genreName, imagePath)
+    await query.addGenre(genreName, imagePath)
     console.log(genreName, imagePath)
     res.redirect("/genres")
   }

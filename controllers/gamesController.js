@@ -53,6 +53,33 @@ exports.createGameGet = asyncHandler(async (req, res) => {
   });
 });
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads");
+  },
+
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    const fileTypes = /jpeg|jpg|png|webp/;
+    const extName = fileTypes.test(
+      path.extname(file.originalname).toLocaleLowerCase(),
+    );
+    const mimeType = fileTypes.test(file.mimetype);
+
+    if (mimeType && extName) {
+      return cb(null, true);
+    } else {
+      cb("Error: images only!");
+    }
+  },
+});
+
 const validateGame = [
   body("title")
     .trim()
@@ -97,6 +124,7 @@ const validateGame = [
 ];
 
 exports.createGamePost = [
+  upload.single("image"),
   validateGame,
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
@@ -135,31 +163,14 @@ exports.createGamePost = [
   }),
 ];
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/uploads");
-  },
+exports.deleteGameGet = asyncHandler(async (req, res) => {
+  const id = req.params.id;
 
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+  const gameDeleted = await query.deleteGame(id);
 
-const upload = multer({
-  storage: storage,
-  fileFilter: function (req, file, cb) {
-    const fileTypes = /jpeg|jpg|png|webp/;
-    const extName = fileTypes.test(
-      path.extname(file.originalname).toLocaleLowerCase(),
-    );
-    const mimeType = fileTypes.test(file.mimetype);
+  if (gameDeleted.rowCount === 0) {
+    throw new Error("No game deleted!")
+  }
 
-    if (mimeType && extName) {
-      return cb(null, true);
-    } else {
-      cb("Error: images only!");
-    }
-  },
-});
-
-exports.upload = upload.single("image");
+  res.redirect("/games")
+})

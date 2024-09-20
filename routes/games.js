@@ -4,7 +4,8 @@ const router = Router();
 
 router.get("/", gamesController.gamesGet);
 router.get("/new", gamesController.createGameGet);
-router.post("/new", gamesController.upload, gamesController.createGamePost);
+router.post("/new", gamesController.createGamePost);
 router.get("/:id", gamesController.idGameGet);
+router.get("/delete/:id", gamesController.deleteGameGet)
 
 module.exports = router;
