@@ -23,14 +23,15 @@ exports.genresGet = asyncHandler(async (req, res) => {
 
 exports.gamesPerGenreGet = asyncHandler(async (req, res) => {
   const genreId = req.params.id;
+  const getGenre = await query.getGenre(genreId)
   const gamesByGenre = await query.getGamesByGenre(genreId);
-
+  console.log(getGenre[0].name)
   if (!gamesByGenre) {
     throw new Error("Games not found");
   }
 
   res.render("layout", {
-    title: `${gamesByGenre[0].genre} games`,
+    title: `${getGenre[0].name} games`,
     view: "games",
     tab: "genres",
     add: "game",
@@ -134,3 +135,7 @@ exports.createGenrePost = [
     res.redirect("/genres")
   }
 ];
+
+exports.deleteGenreGet = async (req, res) => {
+  const id = req.params.id
+}

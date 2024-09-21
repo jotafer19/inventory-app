@@ -8,9 +8,18 @@
                     <div class="card-title"><%= genre.name %></div>
                 </div>
             </a>
+            <a href="/genres/delete/<%= genre.id %>"><button class="delete btn">Delete</button></a>
         <% }) %>
     </div>
     <a href="/genres/new" aria-label="Add genre">
         <%- include("partials/addItem") %>
     </a>
 </div>
+
+<style>
+    .card .delete.btn {
+        position: absolute;
+        background-color: red;
+        z-index: 999;
+    }
+</style>

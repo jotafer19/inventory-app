@@ -163,14 +163,15 @@ exports.createGamePost = [
   }),
 ];
 
-exports.deleteGameGet = asyncHandler(async (req, res) => {
+exports.gameDelete = asyncHandler(async (req, res) => {
   const id = req.params.id;
-
+  console.log(id)
+  console.log('Received DELETE request for game ID:', id);
   const gameDeleted = await query.deleteGame(id);
 
   if (gameDeleted.rowCount === 0) {
     throw new Error("No game deleted!")
   }
 
-  res.redirect("/games")
+  res.status(200).send("Game delete")
 })
