@@ -133,7 +133,7 @@ async function getGame(id) {
 }
 
 async function getGenre(id) {
-  const { rows } = await pool.query("SELECT genres.name FROM genres WHERE genres.id = ($1)", [id])
+  const { rows } = await pool.query("SELECT * FROM genres WHERE genres.id = ($1)", [id])
   return rows;
 }
 
@@ -237,8 +237,14 @@ async function deleteGame(id) {
   return result;
 }
 
-async function deleteGenreGet(id) {
-  const result = await pool.query("DELETE FROM")
+async function deleteGenre(id) {
+  const result = await pool.query("DELETE FROM genres WHERE genres.id = ($1)", [id])
+  return result
+}
+
+async function deleteGamesByGenre(gamesArray) {
+  const result = await pool.query("DELETE FROM games WHERE games.id = ANY($1)", [gamesArray])
+  return result;
 }
 
 module.exports = {
@@ -255,5 +261,7 @@ module.exports = {
   addGame,
   addGenre,
   addDeveloper,
-  deleteGame
+  deleteGame,
+  deleteGenre,
+  deleteGamesByGenre
 };

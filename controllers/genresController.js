@@ -25,7 +25,7 @@ exports.gamesPerGenreGet = asyncHandler(async (req, res) => {
   const genreId = req.params.id;
   const getGenre = await query.getGenre(genreId)
   const gamesByGenre = await query.getGamesByGenre(genreId);
-  console.log(getGenre[0].name)
+
   if (!gamesByGenre) {
     throw new Error("Games not found");
   }
@@ -131,11 +131,43 @@ exports.createGenrePost = [
     const imagePath = req.file.filename
 
     await query.addGenre(genreName, imagePath)
-    console.log(genreName, imagePath)
     res.redirect("/genres")
   }
 ];
 
-exports.deleteGenreGet = async (req, res) => {
+exports.genreDelete = asyncHandler(async (req, res) => {
   const id = req.params.id
-}
+
+  const genreGet = await query.getGenre(id)
+  if (!genreGet) {
+    throw new Error("Genre not found!")
+  }
+
+  const gamesByGenre = await query.getGamesByGenre(id);
+  if (!gamesByGenre) {
+    throw new Error("Games not found!")
+  }
+
+  const genreDeleted = await query.deleteGenre(id)
+  if (genreDeleted.rowCount === 0) {
+    throw new Error("Genre has not been deleted!")
+  }
+
+  fs.unlink(`public/uploads/genres/${genreGet[0].logo}`, (err) => {
+    if (err) console.log("Failed to delete the file", err)
+  })
+
+  if (gamesByGenre.length != 0) {
+    gamesByGenre.forEach(async (game) => {
+      const gameDeleted = await query.deleteGame(game.id)
+      if (gameDeleted.rowCount === 0) throw new Error("Game has not been deleted")
+      if (game.url != "public/images/no_image.jpg") {
+        fs.unlink(`public/uploads/games/${game.url}`, (err) => {
+          if (err) console.log("Failed to delete file", err)
+        })
+      }
+    })
+  }
+
+  res.status(200).send("Genre deleted")
+})

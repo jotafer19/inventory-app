@@ -2,13 +2,13 @@
     <h2>Genres</h2>
     <div class="list genres-list">
         <% genres.forEach(genre => { %>
-            <a href="/genres/<%= genre.id %>">
-                <div class="card">
-                    <img class="card-img" src="uploads/<%= genre.logo %>.webp" alt="<%= genre.name %> image">
-                    <div class="card-title"><%= genre.name %></div>
-                </div>
-            </a>
-            <a href="/genres/delete/<%= genre.id %>"><button class="delete btn">Delete</button></a>
+                <a href="/genres/<%= genre.id %>">
+                    <div class="card">
+                        <img class="card-img" src="uploads/<%= genre.logo %>.webp" alt="<%= genre.name %> image">
+                        <div class="card-title"><%= genre.name %></div>
+                    </div>
+                </a>
+                <button data-genre-id="<%= genre.id %>" class="delete btn">Delete</button>
         <% }) %>
     </div>
     <a href="/genres/new" aria-label="Add genre">
@@ -23,3 +23,29 @@
         z-index: 999;
     }
 </style>
+
+<script defer>
+    const deleteButtons = document.querySelectorAll(".delete")
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", async () => {
+            try {
+                const genreId = button.dataset.genreId;
+                const response = await fetch(`/genres/${genreId}`, {
+                    method: "DELETE"
+                })
+
+                if (response.ok) {
+                    const message = await response.text()
+                    console.log(message)
+                    window.location.reload()
+                } else {
+                    const errorMessage = await response.text();
+                    throw new Error(errorMessage)
+                }
+            } catch(error) {
+                console.error("An error occurred while trying to delete the genre:", error);
+            }
+        })
+    })
+</script>

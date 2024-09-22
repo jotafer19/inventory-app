@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const path = require("node:path");
 const multer = require("multer");
+const fs = require("fs")
 const { body, validationResult } = require("express-validator");
 const query = require("../db/query");
 
@@ -55,7 +56,7 @@ exports.createGameGet = asyncHandler(async (req, res) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads");
+    cb(null, "public/uploads/games");
   },
 
   filename: (req, file, cb) => {
@@ -110,7 +111,11 @@ const validateGame = [
     .notEmpty()
     .isFloat({ min: 1, max: 5 })
     .withMessage("Rating should be a float number between 1 and 5"),
-  body("description").optional().trim().escape().isLength({ max: 500 }),
+  body("description")
+    .optional()
+    .trim()
+    .matches(/^[a-zA-Z0-9'_\-.,!?@#$%^&*()+=\[\]{}|\\:;"\/~`\n\r ]*$/)
+    .withMessage('The field contains invalid characters (e.g., <, > are not allowed).'),
   body("genres")
     .trim()
     .escape()
@@ -126,12 +131,23 @@ const validateGame = [
 exports.createGamePost = [
   upload.single("image"),
   validateGame,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+      if (req.file) {
+        fs.unlink(`public/uploads/games/${req.file.filename}`, (err) => {
+          if (err) console.log("Failed to delete file", err)
+        })
+      }
+
       const allGenres = await query.getAllGenres();
       const allDevelopers = await query.getAllDevelopers();
+
+      if (!allGenres || !allDevelopers) {
+        throw new Error("Data not found");
+      }
+
       return res.status(400).render("layout", {
         title: "New game",
         view: "createGame",
@@ -141,10 +157,15 @@ exports.createGamePost = [
         developers: allDevelopers,
       });
     }
+
+    next();
+  }),
+  async (req, res) => {
     const { title, date, rating, description, genres, developers } = req.body;
     const imagePath = req.file
       ? req.file.filename
       : "public/images/no_image.jpg";
+    const formattedRating = parseFloat(rating).toFixed(1);
     const arrGenres = genres.split(",").map((genre) => genre.trim());
     const arrDevelopers = developers
       .split(",")
@@ -154,23 +175,33 @@ exports.createGamePost = [
       title,
       date,
       description,
-      rating,
+      formattedRating,
       imagePath,
       arrGenres,
       arrDevelopers,
     );
     res.redirect("/games");
-  }),
+  }
 ];
 
 exports.gameDelete = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  console.log(id)
   console.log('Received DELETE request for game ID:', id);
+  const gameGet = await query.getGame(id)
   const gameDeleted = await query.deleteGame(id);
 
+  if (!gameGet) {
+    throw new Error("Game not found!")
+  }
+
   if (gameDeleted.rowCount === 0) {
-    throw new Error("No game deleted!")
+    throw new Error("Game has not been deleted!")
+  }
+
+  if (gameGet.url != "public/images/no_image.jpg") {
+    fs.unlink(`public/uploads/games/${gameGet.url}`, (err) => {
+      if (err) console.log("Failed to delete file", err)
+    })
   }
 
   res.status(200).send("Game delete")

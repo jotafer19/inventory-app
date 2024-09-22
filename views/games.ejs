@@ -4,7 +4,7 @@
         <% games.forEach(game => { %>
             <a href="/games/<%= game.id %>">
                 <div class="card game-card">
-                    <img class="card-img" src="/uploads/<%= game.url %>" alt="<%= game.title %> image" onerror="this.onerror=null; this.src='/images/no_image.jpg';">
+                    <img class="card-img" src="/uploads/games/<%= game.url %>" alt="<%= game.title %> image" onerror="this.onerror=null; this.src='/images/no_image.jpg';">
                     >
                     <div class="card-title"><%= game.title %></div>
                 </div>

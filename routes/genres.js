@@ -6,5 +6,6 @@ router.get("/", genresController.genresGet);
 router.get("/new", genresController.createGenreGet);
 router.post("/new", genresController.createGenrePost);
 router.get("/:id", genresController.gamesPerGenreGet);
+router.delete("/:id", genresController.genreDelete)
 
 module.exports = router;
