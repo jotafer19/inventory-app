@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const multer = require("multer");
 const path = require("node:path");
-const fs = require("fs")
+const fs = require("fs");
 const { body, validationResult } = require("express-validator");
 const query = require("../db/query");
 
@@ -23,7 +23,7 @@ exports.genresGet = asyncHandler(async (req, res) => {
 
 exports.gamesPerGenreGet = asyncHandler(async (req, res) => {
   const genreId = req.params.id;
-  const getGenre = await query.getGenre(genreId)
+  const getGenre = await query.getGenre(genreId);
   const gamesByGenre = await query.getGamesByGenre(genreId);
 
   if (!gamesByGenre) {
@@ -67,16 +67,16 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const fileType = path.extname(file.originalname).toLocaleLowerCase()
+    const fileType = path.extname(file.originalname).toLocaleLowerCase();
     const validExtensions = /jpg|jpeg|webp|png/;
-    const isValidExtension = validExtensions.test(fileType)
-    const isValidMimeType = validExtensions.test(file.mimetype)
+    const isValidExtension = validExtensions.test(fileType);
+    const isValidMimeType = validExtensions.test(file.mimetype);
 
     if (!isValidExtension || !isValidMimeType) {
-      return cb(new Error("Only images allowed"))
+      return cb(new Error("Only images allowed"));
     }
 
-    cb(null, true)
+    cb(null, true);
   },
 });
 
@@ -103,71 +103,72 @@ exports.createGenrePost = [
   upload.single("genreImage"),
   validateGenre,
   async (req, res, next) => {
-    const errors = validationResult(req)
+    const errors = validationResult(req);
 
     if (!req.file) {
-      errors.errors.push({ msg: "Image is required" })
+      errors.errors.push({ msg: "Image is required" });
     }
 
     if (!errors.isEmpty()) {
       if (req.file) {
         fs.unlink(`public/uploads/genres/${req.file.filename}`, (err) => {
-          if (err) console.log("Failed to delete the file", err)
-        })
+          if (err) console.log("Failed to delete the file", err);
+        });
       }
 
       return res.status(400).render("layout", {
         title: "New genre",
         view: "createGenre",
         tab: "genres",
-        errors: errors.array()
-      })
+        errors: errors.array(),
+      });
     }
 
-    next()
+    next();
   },
   async (req, res) => {
-    const { genreName } = req.body
-    const imagePath = req.file.filename
+    const { genreName } = req.body;
+    const imagePath = req.file.filename;
 
-    await query.addGenre(genreName, imagePath)
-    res.redirect("/genres")
-  }
+    await query.addGenre(genreName, imagePath);
+    res.redirect("/genres");
+  },
 ];
 
 exports.genreDelete = asyncHandler(async (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
 
-  const genreGet = await query.getGenre(id)
+  const genreGet = await query.getGenre(id);
   if (!genreGet) {
-    throw new Error("Genre not found!")
+    throw new Error("Genre not found!");
   }
 
   const gamesByGenre = await query.getGamesByGenre(id);
   if (!gamesByGenre) {
-    throw new Error("Games not found!")
+    throw new Error("Games not found!");
   }
 
-  const genreDeleted = await query.deleteGenre(id)
+  const genreDeleted = await query.deleteGenre(id);
   if (genreDeleted.rowCount === 0) {
-    throw new Error("Genre has not been deleted!")
+    throw new Error("Genre has not been deleted!");
   }
 
   fs.unlink(`public/uploads/genres/${genreGet[0].logo}`, (err) => {
-    if (err) console.log("Failed to delete the file", err)
-  })
+    if (err) console.log("Failed to delete the file", err);
+  });
 
   if (gamesByGenre.length != 0) {
     gamesByGenre.forEach(async (game) => {
-      const gameDeleted = await query.deleteGame(game.id)
-      if (gameDeleted.rowCount === 0) throw new Error("Game has not been deleted")
+      const gameDeleted = await query.deleteGame(game.id);
+      if (gameDeleted.rowCount === 0)
+        throw new Error("Game has not been deleted");
       if (game.url != "public/images/no_image.jpg") {
         fs.unlink(`public/uploads/games/${game.url}`, (err) => {
-          if (err) console.log("Failed to delete file", err)
-        })
+          if (err) console.log("Failed to delete file", err);
+        });
       }
-    })
+    });
   }
 
-  res.status(200).send("Genre deleted")
-})
+  res.status(200).send("Genre deleted");
+});

@@ -14,14 +14,17 @@ const developersElements = {
   suggestions: document.querySelector("#developers-suggestions"),
 };
 
+let selectedTags = {
+  genres: genresElements.hiddenInput.value.split(",").filter(item => item != ""),
+  developers: developersElements.hiddenInput.value.split(",").filter(item => item != ""),
+};
+
 const availableGenres = [...genresElements.allItems].map(
   (tag) => tag.textContent,
 );
 const availableDevelopers = [...developersElements.allItems].map(
   (tag) => tag.textContent,
 );
-
-let selectedTags = { genres: [], developers: [] };
 
 function addTag(tag, type, availableItems) {
   if (!selectedTags[type].includes(tag)) {
@@ -120,7 +123,38 @@ function hideSuggestionsOnClickOutside(elements) {
   });
 }
 
+function showSuggestionsOnContainerClick(type, availableItems, elements) {
+  elements.container.addEventListener("click", () => {
+    elements.suggestions.textContent = "";
+
+    const filteredItems = availableItems.filter(item => !selectedTags[type].includes(item))
+  
+    if (filteredItems.length) {
+      elements.suggestions.style.display = "block";
+      filteredItems.forEach((item) => {
+        const suggestion = document.createElement("li");
+        suggestion.className = `${type}-item`;
+        suggestion.textContent = item;
+        suggestion.addEventListener("click", () => {
+          addTag(item, type, elements);
+          elements.suggestions.style.display = "none";
+        });
+        elements.suggestions.appendChild(suggestion);
+      });
+    } else {
+      elements.suggestions.style.display = "none";
+    }
+  })
+}
+
 attachInputHandler("genres", availableGenres, genresElements);
 attachInputHandler("developers", availableDevelopers, developersElements);
 hideSuggestionsOnClickOutside(genresElements);
 hideSuggestionsOnClickOutside(developersElements);
+showSuggestionsOnContainerClick("genres", availableGenres, genresElements)
+showSuggestionsOnContainerClick("developers", availableDevelopers, developersElements)
+
+window.addEventListener("load", () => {
+  updateTags("genres", genresElements);
+  updateTags("developers", developersElements);
+});

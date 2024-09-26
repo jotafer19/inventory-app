@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("node:path");
 require("dotenv").config();
+const methodOverride = require("method-override")
 const indexRouter = require("./routes/index");
 const gamesRouter = require("./routes/games");
 const genresRouter = require("./routes/genres");
@@ -14,6 +15,8 @@ app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(methodOverride('_method'));
 
 app.use("/", indexRouter);
 app.use("/games", gamesRouter);

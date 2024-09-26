@@ -77,6 +77,7 @@
         event.stopPropagation()
         modal.classList.toggle("active")
     })
+    
     document.addEventListener("click", event => {
         if (!event.target.closest(".modal-content") && modal.classList.contains("active")) {
             modal.classList.remove("active");

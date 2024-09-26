@@ -17,7 +17,7 @@
     <div class="list genres-list">
         <% genres.forEach(genre => { %>
             <div class="card genre-card">
-                <img class="card-img" src="/uploads/<%= genre.logo %>" alt="<%= genre.name %> logo">
+                <img class="card-img" src="/uploads/genres/<%= genre.logo %>" alt="<%= genre.name %> logo">
                 <div class="card-title"><%= genre.name %></div>
             </div>
         <% }) %>

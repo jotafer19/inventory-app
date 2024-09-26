@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="/styles/formTags.css">
+<script src="/scripts/formTags.js" defer></script>
+
+<div class="container form-container">
+    <%- include("partials/error") %>
+    <form action="/games/<%= game.id %>/edit?_method=PUT" method="POST" enctype="multipart/form-data">
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title" value="<%= game.title %>" aria-label="Title of the game" required>
+        <label for="date">Release date</label>
+        <input type="date" name="date" id="date" value="<%= date.toISOString().split("T")[0] %>" aria-label="Release date of the game" required>
+        <label for="rating">Rating</label>
+        <input type="text" name="rating" id="rating" value="<%= game.rating %>" aria-label="Rating of the game" placeholder="Number between 0 and 5" required>
+        <label for="description">Description</label>
+        <textarea name="description" id="description" value="<%= game.description %>" aria-label="Description of the game"></textarea>
+        <label for="image">Image</label>
+        <input type="file" name="image" id="image" value="<%= game.url %>" aria-label="Upload an image for the game">
+
+        <div class="genres">
+            <label for="genres-input">Genres</label>
+            <div class="genres-container tag-container">
+                <input type="text" class="tag-input" id="genres-input" aria-label="Add genres to the game" placeholder="Select or type to add a tag...">
+            </div>
+            <ul id="genres-suggestions" class="suggestions-list" aria-label="Genres suggestions">
+                <% genres.forEach(genre => { %>
+                    <li class="item genre-item"><%= genre.name %></li>
+                <% }) %>
+            </ul>
+            <input type="hidden" class="hidden-input" name="genres" id="genres-tags" value="<%= game.genres.map(item => item.name).join(",") %>">
+        </div>
+
+        <div class="developers">
+            <label for="developers-input">Developers</label>
+            <div class="developers-container tag-container">
+                <input type="text" class="tag-input" id="developers-input" aria-label="Add developers to the game" placeholder="Select or type to add a tag...">
+            </div>
+            <ul id="developers-suggestions" class="suggestions-list" aria-label="Developers suggestions">
+                <% developers.forEach(developer => { %>
+                    <li class="item developer-item"><%= developer.name %></li>
+                <% }) %>
+            </ul>
+            <input type="hidden" class="hidden-input" name="developers" id="developers-tags" value="<%= game.developers.map(item => item.name).join(",") %>">
+        </div>
+
+        <input type="hidden" name="_method" value="PUT" />
+
+        <button type="submit">Edit game</button>
+    </form>
+</div>

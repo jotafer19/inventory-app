@@ -133,7 +133,18 @@ async function getGame(id) {
 }
 
 async function getGenre(id) {
-  const { rows } = await pool.query("SELECT * FROM genres WHERE genres.id = ($1)", [id])
+  const { rows } = await pool.query(
+    "SELECT * FROM genres WHERE genres.id = ($1)",
+    [id],
+  );
+  return rows;
+}
+
+async function getDeveloper(id) {
+  const { rows } = await pool.query(
+    "SELECT * FROM developers WHERE developers.id = ($1)",
+    [id],
+  );
   return rows;
 }
 
@@ -229,22 +240,62 @@ async function addGenre(name, imagePath) {
 }
 
 async function addDeveloper(name, imagePath) {
-  await pool.query("INSERT INTO developers (name, logo) VALUES ($1, $2)", [name, imagePath])
+  await pool.query("INSERT INTO developers (name, logo) VALUES ($1, $2)", [
+    name,
+    imagePath,
+  ]);
 }
 
 async function deleteGame(id) {
-  const result = await pool.query("DELETE FROM games WHERE games.id = ($1)", [id])
+  const result = await pool.query("DELETE FROM games WHERE games.id = ($1)", [
+    id,
+  ]);
   return result;
 }
 
 async function deleteGenre(id) {
-  const result = await pool.query("DELETE FROM genres WHERE genres.id = ($1)", [id])
-  return result
+  const result = await pool.query("DELETE FROM genres WHERE genres.id = ($1)", [
+    id,
+  ]);
+  return result;
 }
 
 async function deleteGamesByGenre(gamesArray) {
-  const result = await pool.query("DELETE FROM games WHERE games.id = ANY($1)", [gamesArray])
+  const result = await pool.query(
+    "DELETE FROM games WHERE games.id = ANY($1)",
+    [gamesArray],
+  );
   return result;
+}
+
+async function editGame(
+  gameId,
+  title,
+  date,
+  description,
+  rating,
+  url,
+  genres,
+  developers
+) {
+  const query = "UPDATE games SET title = $1, release_date = $2, description = $3, rating = $4, url = $5 WHERE id = $6"
+  await pool.query(query, [title, date, description, rating, url, gameId])
+
+  await pool.query("DELETE FROM games_genres WHERE games_genres.game_id = $1", [gameId])
+  const genreQuery = "INSERT INTO games_genres (game_id, genre_id) VALUES ($1, $2)";
+  for (const genre of genres) {
+    const genreRes = await pool.query("SELECT id FROM genres WHERE name LIKE $1", [genre]);
+    const genreId = genreRes.rows[0].id;
+    await pool.query(genreQuery, [gameId, genreId]);
+  }
+
+  await pool.query("DELETE FROM developers_games WHERE developers_games.game_id = $1", [gameId])
+  const developerQuery = "INSERT INTO developers_games (developer_id, game_id) VALUES ($1, $2)";
+  for (const developer of developers) {
+    const developerRes = await pool.query("SELECT id FROM developers WHERE name LIKE $1", [developer]);
+    const developerId = developerRes.rows[0].id;
+    await pool.query(developerQuery, [developerId, gameId]);
+  }
 }
 
 module.exports = {
@@ -257,11 +308,13 @@ module.exports = {
   getGame,
   getGenre,
   getGamesByGenre,
+  getDeveloper,
   getGamesByDevelopers,
   addGame,
   addGenre,
   addDeveloper,
   deleteGame,
   deleteGenre,
-  deleteGamesByGenre
+  deleteGamesByGenre,
+  editGame
 };
