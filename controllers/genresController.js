@@ -86,10 +86,16 @@ const validateGenre = [
     .escape()
     .notEmpty()
     .withMessage("You should add a genre")
-    .custom(async (genre) => {
+    .custom(async (name, { req }) => {
+      const genre = await query.getGenre(req.params.id)
+      
+      if (genre && genre[0].name.toLowerCase() === name.toLowerCase()) {
+        return true;
+      }
+
       const allGenres = await query.getAllGenres();
       const genreExists = allGenres.some(
-        (item) => item.name.toLowerCase() === genre.toLowerCase(),
+        (item) => item.name.toLowerCase() === name.toLowerCase(),
       );
 
       if (genreExists) {
@@ -172,3 +178,70 @@ exports.genreDelete = asyncHandler(async (req, res) => {
 
   res.status(200).send("Genre deleted");
 });
+
+exports.editGenreGet = asyncHandler(async (req, res) => {
+  const id = req.params.id
+  const genre = await query.getGenre(id)
+  
+  if (!genre) {
+    throw new Error("Genre not found")
+  }
+  
+  res.render("layout", {
+    title: "New genre",
+    view: "editGenre",
+    tab: "genres",
+    genre: genre[0]
+  })
+})
+
+exports.editGenrePut = [
+  upload.single("genreImage"),
+  validateGenre,
+  asyncHandler(async (req, res, next) => {
+    const genre = await query.getGenre(req.params.id)
+
+    if (!genre) {
+      throw new Error("Genre could not been retrieved")
+    }
+
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      if (req.file) {
+        fs.unlink(`public/uploads/genres/${req.file.filename}`, (err) => {
+          if (err) console.log("Failed to delete the file", err);
+        })
+      }
+
+      return res.status(400).render("layout", {
+        title: "New genre",
+        view: "editGenre",
+        tab: "genres",
+        genre: genre[0],
+        errors: errors.array()
+      })
+    }
+
+    next()
+  }),
+  asyncHandler(async(req, res) => {
+    const genre = await query.getGenre(req.params.id)
+
+    if (!genre) {
+      throw new Error("Genre could not been retrieved")
+    }
+
+    if (req.file) {
+      fs.unlink(`public/uploads/genres/${genre[0].logo}`, (err) => {
+        if (err) console.log("Failed to delete the file", err);
+      })
+    }
+
+    const { genreName } = req.body;
+    const imagePath = req.file ? req.file.filename : genre[0].logo;
+   
+    await query.editGenre(genre[0].id, genreName, imagePath)
+    res.redirect(`/genres`)
+  })
+]

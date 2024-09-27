@@ -298,6 +298,10 @@ async function editGame(
   }
 }
 
+async function editGenre(id, name, logo) {
+  await pool.query("UPDATE genres SET name = $1, logo = $2 WHERE genres.id = $3", [name, logo, id])
+}
+
 module.exports = {
   getAllGames,
   getAllGenres,
@@ -316,5 +320,6 @@ module.exports = {
   deleteGame,
   deleteGenre,
   deleteGamesByGenre,
-  editGame
+  editGame,
+  editGenre
 };

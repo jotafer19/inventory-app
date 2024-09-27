@@ -9,6 +9,7 @@
                     </div>
                 </a>
                 <button data-genre-id="<%= genre.id %>" class="delete btn">Delete</button>
+                <a href="/genres/<%= genre.id %>/edit"><button class="edit btn">Edit</button></a>
         <% }) %>
     </div>
     <a href="/genres/new" aria-label="Add genre">

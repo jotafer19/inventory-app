@@ -1,0 +1,13 @@
+<div class="container form-container"></div>
+    <%- include("partials/error") %>
+    <form action="/genres/<%= genre.id %>/edit?_method=PUT" method="post" enctype="multipart/form-data">
+        <label for="genreName">Genre name</label>
+        <input type="text" name="genreName" id="genreName" value="<%= genre.name %>" required>
+        <label for="genreImage">Genre image</label>
+        <input type="file" name="genreImage" id="genreImage" accept="image/*">
+
+        <input type="hidden" name="_method" value="PUT" />
+        
+        <button type="submit">Edit genre</button>
+    </form>
+</div>
