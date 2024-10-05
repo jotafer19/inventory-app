@@ -88,8 +88,8 @@ const validateGenre = [
     .withMessage("You should add a genre")
     .custom(async (name, { req }) => {
       const genre = await query.getGenre(req.params.id)
-      
-      if (genre && genre[0].name.toLowerCase() === name.toLowerCase()) {
+
+      if (genre.length && genre[0].name.toLowerCase() === name.toLowerCase()) {
         return true;
       }
 
@@ -188,7 +188,7 @@ exports.editGenreGet = asyncHandler(async (req, res) => {
   }
   
   res.render("layout", {
-    title: "New genre",
+    title: `Edit ${genre[0].name}`,
     view: "editGenre",
     tab: "genres",
     genre: genre[0]

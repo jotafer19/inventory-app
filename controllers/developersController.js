@@ -77,16 +77,21 @@ const validateDeveloper = [
     .escape()
     .notEmpty()
     .withMessage("Developer name required")
-    .custom(async (developer) => {
+    .custom(async (name, { req }) => {
+      const developer = await query.getDeveloper(req.params.id)
+      
+      if (developer.length && developer[0].name.toLowerCase() === name.toLowerCase()) {
+        return true;
+      }
+
       const allDevelopers = await query.getAllDevelopers();
       const developerExists = allDevelopers.some(
-        (item) => developer.toLowerCase() === item.name.toLowerCase(),
+        (item) => item.name.toLowerCase() === name.toLowerCase(),
       );
 
       if (developerExists) {
         throw new Error("Developer is already in the database");
       }
-
       return true;
     }),
 ];
@@ -121,7 +126,6 @@ exports.createDeveloperPost = [
   async (req, res) => {
     const { developerName } = req.body;
     const imagePath = req.file.filename;
-    console.log(developerName, imagePath);
 
     await query.addDeveloper(developerName, imagePath);
     res.redirect("/developers");
@@ -130,7 +134,105 @@ exports.createDeveloperPost = [
 
 exports.developerDelete = asyncHandler(async (req, res) => {
   const id = req.params.id;
+  
+  const developer = await query.getDeveloper(id)
+  if (!developer) {
+    throw new Error("Could not retrieve developer")
+  }
 
-  const developerGet = await query.getDeveloper(id);
-  console.log(developerGet);
+  const gamesByDeveloper = await query.getGamesByDevelopers(id)
+  if (!gamesByDeveloper) {
+    throw new Error("Games not found")
+  }
+
+  const developerDeleted = await query.deleteDeveloper(id)
+  if (developerDeleted.rowCount === 0) {
+    throw new Error("Developer has not been deleted.")
+  }
+  fs.unlink(`public/uploads/developers/${developer[0].logo}`, (err) => {
+    if (err) console.log("Failed to delete the file", err);
+  })
+
+  if (gamesByDeveloper.length != 0) {
+    gamesByDeveloper.forEach( async (game) => {
+      const gameDeleted = await query.deleteGame(game.id)
+      if (gameDeleted.rowCount === 0) {
+        throw new Error("Game has not been deleted");
+      }
+      if (game.url != "public/images/no_image.jpg") {
+        fs.unlink(`public/uploads/games/${game.url}`, (err) => {
+          if (err) console.log("Failed to delete file", err);
+        });
+      }
+    })
+  }
+
+  res.status(200).send("Developer deleted")
 });
+
+exports.editDeveloperGet = asyncHandler(async (req, res) => {
+  const id = req.params.id
+  const developer = await query.getDeveloper(id)
+  
+  if (!developer) {
+    throw new Error("Developer not found")
+  }
+  
+  res.render("layout", {
+    title: `Edit ${developer[0].name}`,
+    view: "editDeveloper",
+    tab: "developers",
+    developer: developer[0]
+  })
+})
+
+exports.editDeveloperPut = [
+  upload.single("developerImage"),
+  validateDeveloper,
+  asyncHandler(async (req, res, next) => {
+    const developer = await query.getDeveloper(req.params.id)
+
+    if (!developer) {
+      throw new Error("Developer could not been retrieved")
+    }
+
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      if (req.file) {
+        fs.unlink(`public/uploads/developers/${req.file.filename}`, (err) => {
+          if (err) console.log("Failed to delete the file", err);
+        })
+      }
+
+      return res.status(400).render("layout", {
+        title: `Edit ${developer[0].name}`,
+        view: "editDeveloper",
+        tab: "developers",
+        developer: developer[0],
+        errors: errors.array()
+      })
+    }
+
+    next()
+  }),
+  asyncHandler(async(req, res) => {
+    const developer = await query.getDeveloper(req.params.id)
+
+    if (!developer) {
+      throw new Error("Developer could not been retrieved")
+    }
+
+    if (req.file) {
+      fs.unlink(`public/uploads/developers/${developer[0].logo}`, (err) => {
+        if (err) console.log("Failed to delete the file", err);
+      })
+    }
+
+    const { developerName } = req.body;
+    const imagePath = req.file ? req.file.filename : developer[0].logo;
+    
+    await query.editDeveloper(developer[0].id, developerName, imagePath)
+    res.redirect(`/developers`)
+  })
+]

@@ -260,12 +260,22 @@ async function deleteGenre(id) {
   return result;
 }
 
+async function deleteDeveloper(id) {
+  const result = pool.query("DELETE FROM developers WHERE developers.id = $1", [id])
+  return result;
+}
+
 async function deleteGamesByGenre(gamesArray) {
   const result = await pool.query(
     "DELETE FROM games WHERE games.id = ANY($1)",
     [gamesArray],
   );
   return result;
+}
+
+async function deleteGamesByDeveloper(gamesArray) {
+  const result = await pool.query("DELETE FROM games WHERE games.id = ANY($1)", [gamesArray])
+  return result
 }
 
 async function editGame(
@@ -302,6 +312,10 @@ async function editGenre(id, name, logo) {
   await pool.query("UPDATE genres SET name = $1, logo = $2 WHERE genres.id = $3", [name, logo, id])
 }
 
+async function editDeveloper(id, name, logo) {
+  await pool.query("UPDATE developers SET name = $1, logo = $2 WHERE developers.id = $3", [name, logo, id])
+}
+
 module.exports = {
   getAllGames,
   getAllGenres,
@@ -319,7 +333,10 @@ module.exports = {
   addDeveloper,
   deleteGame,
   deleteGenre,
+  deleteDeveloper,
   deleteGamesByGenre,
+  deleteGamesByDeveloper,
   editGame,
-  editGenre
+  editGenre,
+  editDeveloper
 };

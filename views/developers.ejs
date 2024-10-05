@@ -8,6 +8,7 @@
                 </div>
             </a>
             <button data-developer-id="<%= developer.id %>" class="delete btn">Delete</button>
+            <a href="/developers/<%= developer.id %>/edit"><button class="edit btn">Edit</button></a>
         <% }) %>
     </div>
     <a href="/developers/new" aria-label="Add developer">
@@ -15,7 +16,7 @@
     </a>
     <div class="modal">
         <div class="modal-content">
-            <div><p>Do you want to delete this game?</p></div>
+            <div><p>Do you want to delete this entry? The games associated with it will also be deleted.</p></div>
             <div>
                 <button class="btn confirm">Yes</button>
                 <button class="btn cancel">No</button>
@@ -62,17 +63,20 @@
         button.addEventListener("click", (event) => {
             event.stopPropagation()
             modal.classList.toggle("active")
+            confirmDelete.setAttribute("data-developer-id", button.dataset.developerId)
         })
     })
 
     document.addEventListener("click", event => {
         if (!event.target.closest(".modal-content") && modal.classList.contains("active")) {
             modal.classList.remove("active");
+            confirmDelete.removeAttribute("data-developer-id")
         }
     })
 
     cancelDelete.addEventListener("click", () => {
         modal.classList.toggle("active")
+        confirmDelete.removeAttribute("data-developer-id")
     })
 
     confirmDelete.addEventListener("click", async () => {
@@ -81,7 +85,7 @@
             const response = await fetch(`/developers/${developerId}`, {
                 method: "DELETE"
             })
-
+            
             if (response.ok) {
                 const message = await response.text()
                 console.log(message)

@@ -1,0 +1,13 @@
+<div class="container form-container"></div>
+    <%- include("partials/error") %>
+    <form action="/developers/<%= developer.id %>/edit?_method=PUT" method="post" enctype="multipart/form-data">
+        <label for="developerName">Developer name</label>
+        <input type="text" name="developerName" id="developerName" value="<%= developer.name %>" required>
+        <label for="developerImage">Developer image</label>
+        <input type="file" name="developerImage" id="developerImage" accept="image/*">
+
+        <input type="hidden" name="_method" value="PUT" />
+        
+        <button type="submit">Edit developer</button>
+    </form>
+</div>

@@ -7,5 +7,7 @@ router.get("/new", developersController.createDeveloperGet);
 router.post("/new", developersController.createDeveloperPost);
 router.get("/:id", developersController.gamesPerDeveloperGet);
 router.delete("/:id", developersController.developerDelete);
+router.get("/:id/edit", developersController.editDeveloperGet)
+router.put("/:id/edit", developersController.editDeveloperPut)
 
 module.exports = router;
