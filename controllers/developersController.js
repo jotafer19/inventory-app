@@ -23,14 +23,15 @@ exports.developersGet = asyncHandler(async (req, res) => {
 
 exports.gamesPerDeveloperGet = asyncHandler(async (req, res) => {
   const developerId = req.params.id;
+  const developer = await query.getDeveloper(developerId)
   const gamesPerDeveloper = await query.getGamesByDevelopers(developerId);
-
+  
   if (!gamesPerDeveloper) {
     throw new Error("Games not found");
   }
-
+  console.log(gamesPerDeveloper)
   res.render("layout", {
-    title: `${gamesPerDeveloper[0].developer} games`,
+    title: `${developer[0].name} games`,
     view: "games",
     tab: "developers",
     add: "game",

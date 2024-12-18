@@ -3,7 +3,7 @@
     <div class="list games-list">
         <% games.forEach(game => { %>
             <a href="/games/<%= game.id %>">
-                <div class="card game-card">
+                <div class="card-container card game-card">
                     <img class="card-img" src="/uploads/games/<%= game.url %>" alt="<%= game.title %> image" onerror="this.onerror=null; this.src='/images/no_image.jpg';">
                     >
                     <div class="card-title"><%= game.title %></div>

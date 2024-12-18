@@ -27,11 +27,13 @@
             <div class="field">
                 <p>
                     <span class="desc">Release date:</span>
-                    <span class="item-value"><%= new Date(game.release_date).toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric"}) %></span>
+                    <span class="item-value date"><%= new Date(game.release_date).toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric"}) %></span>
                 </p>
             </div>
-            <button class="delete btn">Delete</button>
-            <a href="/games/<%= game.id %>/edit"><button class="edit btn">Edit</button></a>
+            <div class="btn-container">
+                <button class="delete btn">Delete</button>
+                <button data-game-id="<%= game.id %>" class="edit btn">Edit</button>
+            </div>
         </div>
     </div>
     <div class="modal">
@@ -73,10 +75,16 @@
     const deleteButton = document.querySelector(".delete")
     const confirmDelete = document.querySelector(".confirm")
     const cancelDelete = document.querySelector(".cancel")
+    const editButton = document.querySelector(".edit")
 
     deleteButton.addEventListener("click", (event) => {
         event.stopPropagation()
         modal.classList.toggle("active")
+    })
+
+    editButton.addEventListener("click", () => {
+        const gameId = editButton.dataset.gameId;
+        window.location.href = `/games/${gameId}/edit`;
     })
     
     document.addEventListener("click", event => {
